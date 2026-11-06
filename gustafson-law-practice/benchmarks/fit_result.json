@@ -1,6 +1,6 @@
 {
-  "alpha_observed": 1.081730731209226,
-  "alpha_stderr": 0.021436330951134206,
-  "hw_concurrency": 1,
-  "t1_mean": 0.0502042
+  "alpha_observed": 0.9798129184518571,
+  "alpha_stderr": 0.007028758146086731,
+  "hw_concurrency": 10,
+  "t1_mean": 0.5527166
 }

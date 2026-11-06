@@ -36,3 +36,25 @@ Fitted **α_observed = 1.08 ± 0.02** — outside the physical range [0,1].
 
 ## Plot content
 (1) ideal S = P (dotted), (2) Gustafson fit (blue), (3) measured ± SE (green), (4) Amdahl with the same s (red; undefined for s ≥ 1, so shown only in legend for this dataset). For a well-behaved dataset use `simulator_overlay.png` to see the expected shapes.
+
+---
+## UPDATE: measurement on the author's machine (supersedes the sandbox section above)
+
+Hardware: Apple M4, 10 logical CPUs, 16 GiB RAM, macOS 26.7.1. Fanless MacBook Air (thermal throttling possible). Apple Silicon has heterogeneous performance/efficiency cores.
+
+Weak-scaling run: P = 1, 2, 4, 6, 8, 10 workers, 5 runs each, 5·10^8 points per worker.
+
+| P | mean T (s) | S(P) | E(P) |
+|---:|---:|---:|---:|
+| 1 | 0.553 | 1.00 | 1.00 |
+| 2 | 0.961 | 1.15 | 0.58 |
+| 4 | 1.863 | 1.19 | 0.30 |
+| 6 | 2.876 | 1.15 | 0.19 |
+| 8 | 3.949 | 1.12 | 0.14 |
+| 10 | 4.969 | 1.11 | 0.11 |
+
+Fitted alpha_observed = 0.98 +/- 0.01.
+
+Interpretation: runtime grows almost proportionally to P, so the scaled speedup saturates near 1.1-1.2 instead of following S = P - alpha(P-1) with small alpha. Gustafson's premise (constant per-worker time) is violated, so the large fitted alpha is an *effective* value that lumps together every non-scaling effect, not a measure of serial code. Likely cause (hypothesis, not verified by a second experiment): the kernel streams 16 MB NumPy temporaries per chunk, larger than L2, so it is limited by shared DRAM bandwidth, which a single core already largely saturates; extra workers add no throughput. Other contributing factors: efficiency cores being slower than performance cores, fanless thermal throttling, and process start-up cost (fork) included in the timing. NUMA is not applicable (single memory domain on Apple Silicon). A first run with 10^7 points/worker was dominated by process start-up (~10 ms per worker) and gave alpha ~ 1.0 as well.
+
+Follow-up (not done): shrink the working set to fit in cache (weak_bench.py was updated for this in a later revision) and re-measure; if S then rises, the memory-bandwidth explanation is confirmed.

@@ -76,3 +76,6 @@ python3 benchmarks/make_plots.py                  # Task 24 -> plots/scaling_com
 * Task 05 figures are quoted from memory — verify against the original papers.
 * Task 10 assumes 48 B per grid cell (stated, adjustable); Task 09 treats phase B as serial per the task wording.
 * Empirical data (Tasks 22–24) come from a 1-vCPU VM; re-run on multi-core hardware and update `analysis/task24_hardware_audit.md` with your machine's `lscpu`/`numactl -H`.
+
+## Update on empirical results
+Final measurement was run on the author's Apple Silicon MacBook (see the UPDATE section in analysis/task24_hardware_audit.md). The fitted alpha ~ 0.98 reflects a memory-bandwidth-bound kernel and process start-up cost, not a property of Gustafson's law; the earlier 1-vCPU sandbox numbers are superseded.
